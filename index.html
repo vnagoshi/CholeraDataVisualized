@@ -105,7 +105,7 @@ button:hover {
           <p style="display: inline-block">Location of a Pump</p>
         </div>
         <div>
-          <p style="display: inline-block">Deaths on Location: </p>
+          <p style="display: inline-block">Deaths at Location: </p>
           <div style="display: inline-block">
             <div style="height: 12px; width: 12px; border-radius: 100%; background: #e99995; display: inline-block"></div>
             <p style="display: inline-block">1&nbsp;</p>
@@ -142,7 +142,7 @@ button:hover {
         <span>Cholera deaths by gender data from Naples in the Time of Cholera 1884-1911 p119.</span>
         <span>Further information available at </span><a href="https://www.nejm.org/doi/full/10.1056/NEJM199610103351520" target="_blank">www.nejm.org/doi/full/10.1056/NEJM199610103351520</a></span>
         <hr>
-        <span>The visuals in Cholera Data Visualized were created with Plotly.js and Leaflet.js. Information available at <a href="https://plot.ly/javascript/">plot.ly/javascript</a> and <a href="https://leafletjs.com/">leafletjs.com</a> respectively.</span>
+        <span>The visuals in Cholera Data Visualized were created with Plotly.js and Leaflet.js. Information available at <a href="https://plot.ly/javascript/" target="_blank">plot.ly/javascript</a> and <a href="https://leafletjs.com/ target="_blank"">leafletjs.com</a> respectively.</span>
         <hr>
         <span>Please address comments and concerns regarding Cholera Data Visualized to Vincent Nagoshi at <a href="mailto:vnagoshi@hawaii.edu">vnagoshi@hawaii.edu</a></span>
       </div>
@@ -151,6 +151,7 @@ button:hover {
   <div class="modal fade" id="cd-dadModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div id="cd-dad"></div>
+      <p>test</p>
     </div>
   </div>
   <div class="modal fade" id="cd-atdtModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -279,6 +280,7 @@ button:hover {
   });
   
   function buildPage() {
+    
     //Map data
     for(let i = 0; i < choleraData["cpl-lat"].length; i++) {
       L.circle([choleraData["cpl-lon"][i], choleraData["cpl-lat"][i]], {
@@ -305,53 +307,62 @@ button:hover {
 	    }).addTo(mymap);
     }
     
-    var data = [{
-      type: 'table',
-      header: {
-        values: [["Date"], ["Attacks"], 
-                     ["Deaths"], ["Total"]],
-        align: "center",
-        line: {width: 1, color: 'black'},
-        fill: {color: "grey"},
-        font: {family: "Arial", size: 12, color: "white"}
-      },
-      cells: {
-        values: [choleraData["cd-date"], choleraData["cd-attack"], choleraData["cd-death"], choleraData["cd-total"]],
-        align: "center",
-        line: {color: "black", width: 1},
-        font: {family: "Arial", size: 11, color: ["black"]} 
-      }
-    }];
-    Plotly.plot('cd-dad', data, {paper_bgcolor: "rgb(217, 204, 190)", margin: {l: 50, r: 50, b: 50, t: 50}});
+    //
+    Plotly.plot('cd-dad',
+      [{
+        type: 'table',
+        header: {
+          values: [["Date"], ["Attacks"], 
+                       ["Total_Attacks"], ["Deaths"], ["Deaths_Total"]],
+          align: "center",
+          line: {width: 1, color: 'black'},
+          fill: {color: "grey"},
+          font: {family: "Arial", size: 12, color: "white"}
+        },
+        cells: {
+          values: [choleraData["cd-date"], choleraData["cd-attack"], choleraData["cd-attack-total"], choleraData["cd-death"], choleraData["cd-death-total"]],
+          align: "center",
+          line: {color: "black", width: 1},
+          font: {family: "Arial", size: 11, color: ["black"]} 
+        }
+      }], {
+        title: "Cholera Attacks and Deaths by Date",
+        paper_bgcolor: "rgb(217, 204, 190)"
+      });
     
+    let trimDates = [];
+    choleraData["cd-date"].forEach(function(e) {
+      trimDates.push(e.replace("-1854", ""));
+    });
     var trace1 = {
-      x: choleraData['cd-date'],
+      x: trimDates,
       y: choleraData['cd-attack'],
       name: 'Attacks',
       type: 'scatter'
     };
     var trace2 = {
-      x: choleraData['cd-date'],
+      x: trimDates,
       y: choleraData['cd-attack-total'],
       name: 'Total Attacks',
       type: 'scatter'
     };
     var trace3 = {
-      x: choleraData['cd-date'],
+      x: trimDates,
       y: choleraData['cd-death'],
       name: 'Deaths',
       type: 'scatter'
     };
     var trace4 = {
-      x: choleraData['cd-date'],
+      x: trimDates,
       y: choleraData['cd-death-total'],
       name: 'Total Deaths',
       type: 'scatter'
     };
     var layout = {
       title: 'Attacks and Deaths by Date',
+      paper_bgcolor: "rgb(217, 204, 190)",
       xaxis: {
-        title: 'Date (1855)',
+        title: 'Date (1854)',
         showgrid: false,
         zeroline: false
       },
@@ -381,64 +392,67 @@ button:hover {
           font: {family: "Arial", size: 11, color: ["black"]} 
         }
       }], {
-        title: "Deaths per 10,000 Inhabitants by Age Group"
+        title: "Deaths per 10,000 Inhabitants by Age Group",
+        paper_bgcolor: "rgb(217, 204, 190)",
       });
     
     // Age Range to Deaths per 10,000 Inhabitants by Gender Bar Chart
-    var trace5 = {
-      x: choleraData["ncasd-age"],
-      y: choleraData["ncasd-male"],
-      name: 'Male',
-      type: 'bar'
-    };
-    var trace6 = {
-      x: choleraData["ncasd-age"],
-      y: choleraData["ncasd-female"],
-      name: 'Female',
-      type: 'bar'
-    };
-    var layout3 = {
-      barmode: 'group',
-      xaxis: {
-        title: 'Age Range',
-      },
-      yaxis: {
-        title: 'Deaths per 10,000 Inhabitants'
-      }
-    };
-    Plotly.newPlot('ncasd-amfbc', [trace5,trace6], layout3);
+    Plotly.newPlot('ncasd-amfbc',
+      [{
+        x: choleraData["ncasd-age"],
+        y: choleraData["ncasd-male"],
+        name: 'Male',
+        type: 'bar'
+      },{
+        x: choleraData["ncasd-age"],
+        y: choleraData["ncasd-female"],
+        name: 'Female',
+        type: 'bar'
+      }], {
+        title: 'Deaths per 10,000 Inhabitants by Age and Gender',
+        paper_bgcolor: "rgb(217, 204, 190)",
+        barmode: 'group',
+        xaxis: {
+          title: 'Age Range',
+        },
+        yaxis: {
+          title: 'Deaths per 10,000 Inhabitants'
+        }
+      });
     
     
     //
-    var data3 = [{
-      type: 'table',
-      header: {
-        values: [["Age_Range"], ["Male"], ["Female"]],
-        align: "center",
-        line: {width: 1, color: 'black'},
-        fill: {color: "grey"},
-        font: {family: "Arial", size: 12, color: "white"}
-      },
-      cells: {
-        values: [choleraData["ukc-age"], choleraData["ukc-male"], choleraData["ukc-female"]],
-        align: "center",
-        line: {color: "black", width: 1},
-        font: {family: "Arial", size: 11, color: ["black"]} 
-      }
-    }];
-    var layout4 = {
-      title: ""
-    }
-    Plotly.plot('ukc-amft', data3, layout4);
+    Plotly.plot('ukc-amft', 
+      [{
+        type: 'table',
+        header: {
+          values: [["Age_Range"], ["Male"], ["Female"]],
+          align: "center",
+          line: {width: 1, color: 'black'},
+          fill: {color: "grey"},
+          font: {family: "Arial", size: 12, color: "white"}
+        },
+        cells: {
+          values: [choleraData["ukc-age"], choleraData["ukc-male"], choleraData["ukc-female"]],
+          align: "center",
+          line: {color: "black", width: 1},
+          font: {family: "Arial", size: 11, color: ["black"]} 
+        }
+      }], {
+        title: "UK Population Age Breakdown by Gender",
+        paper_bgcolor: "rgb(217, 204, 190)"
+      });
    
-
+    //
     Plotly.plot('ukc-ampc', 
       [{
         values: choleraData["ukc-male"],
         labels: choleraData["ukc-age"],
         type: 'pie'
       }], 
-        {title: 'Male Population UK Age Demographic (1851)'
+        {title: 'Male Population UK Age Demographic (1851)',
+        paper_bgcolor: "rgb(217, 204, 190)",
+        margin: {l: 50, r: 50, b: 50, t: 50},
       }); 
     Plotly.plot('ukc-afpc', 
       [{
@@ -446,14 +460,15 @@ button:hover {
         labels: choleraData["ukc-age"],
         type: 'pie'
       }], {
-        title: 'Female Population UK Age Demographic (1851)'
+        title: 'Female Population UK Age Demographic (1851)',
+        paper_bgcolor: "rgb(217, 204, 190)"
       });
     
     Plotly.plot('ukc-amfbc', 
       [{
         x: choleraData["ukc-age"],
         y: choleraData["ukc-male"],
-        name: 'Female',
+        name: 'Male',
         type: 'bar'
       },{
         x: choleraData["ukc-age"],
@@ -462,6 +477,7 @@ button:hover {
         type: 'bar'
       }], {
         title: 'UK Population Demographic by Age',
+        paper_bgcolor: "rgb(217, 204, 190)",
         barmode: 'group',
         xaxis: {
           title: 'Age Range',
@@ -482,17 +498,18 @@ button:hover {
     });
     Plotly.plot('ukc-tmtfpc', 
       [{
-        values: [tMale, tFemale],
-        labels: ["Male", "Female"],
+        values: [tFemale, tMale],
+        labels: ["Female", "Male"],
         type: 'pie'
       }], {
-        title: 'UK Gender Demographic (1851)'
+        title: 'UK Gender Demographic (1851)',
+        paper_bgcolor: "rgb(217, 204, 190)"
       });
   }
   
   </script>
   
-  <script>
+<script>
   var mymap = L.map('mapid', {center: [51.513341, -0.136668],
         zoom: 17, zoomControl: false});
 
@@ -507,9 +524,6 @@ button:hover {
 			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
 		id: 'mapbox.streets'
 	}).addTo(mymap);
-
-
-
-  </script>
+</script>
 </body>
 </html>

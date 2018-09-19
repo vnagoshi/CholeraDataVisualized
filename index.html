@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<title></title>
+
+<!-- Leaflet.js -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA==" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js" integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA==" crossorigin=""></script>
+
+<!-- Plottly.js -->
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+<!-- Bootstrap 4.0 -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+
+<script src="script.js"></script>
+<link rel="stylesheet" href="styles.css">
+
+<style>
+.modebar{
+  display: none !important;
+}
+button {
+  width: 100% !important;
+  border-radius: 0 !important;
+  background: rgb(243,239,235);
+  border: 4px solid rgb(217, 204, 190) !important;
+}
+button:hover {
+  background: #ccc;
+  
+}
+</style>
+
+</head>
+<body>
+  <!-- Mapping -->
+  <div class="container-fluid px-0">
+    <div id="mapid" style="z-index: 0"></div>
+  </div>
+  <!-- -->
+
+
+  
+  
+  <!-- Navigation -->
+  <div class="card w-25 fixed-top ml-1 mt-1 p-1" style="background: rgb(205, 218, 162); border: 4px solid rgb(232,224,216)">
+    <p style="color: rgb(74,74,74); font-weight: bold" class="text-center">Cholera Data Visualized</p>  
+    <div class="btn dropright">
+      <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="box-shadow: none">
+        Chart Display
+      </button>
+      <div class="dropdown-menu p-0">
+        <button type="button" class="btn" data-toggle="modal" data-target="#cd-dadModal">
+          Attacks and Deaths by Date Table
+        </button>
+        <br>
+        <button type="button" class="btn" data-toggle="modal" data-target="#cd-atdtModal">
+          Attacks and Deaths by Date Bar Chart
+        </button>
+        <br>
+        <button type="button" class="btn" data-toggle="modal" data-target="#ncasd-amfModal">
+          Deaths by Age and Gender Table
+        </button>
+        <br>
+        <button type="button" class="btn" data-toggle="modal" data-target="#ncasd-amfbcModal">
+          Deaths by Age and Gender Bar Chart
+        </button>
+        <br>
+        <button type="button" class="btn" data-toggle="modal" data-target="#ukc-amftModal">
+          Population by Age and Gender Table
+        </button>
+        <br>
+        <button type="button" class="btn" data-toggle="modal" data-target="#ukc-amafpcModal">
+          Age breakdown by Gender Pie Chart
+        </button>
+        <br>
+        <button type="button" class="btn" data-toggle="modal" data-target="#ukc-amfbcModal">
+          Age breakdown by Gender Bar Chart
+        </button>
+        <br>
+        <button type="button" class="btn" data-toggle="modal" data-target="#ukc-tmtfpcModal">
+          Population breakdown by Gender Pie Chart
+        </button>
+        
+        <br>
+      </div>
+    </div>
+    <div class="btn">
+      <button type="button" class="btn" data-toggle="modal" data-target="#dinfoModal" style="box-shadow: none">
+        Data Information
+      </button>
+    </div>
+    <div class="p-3">
+      <div style="background: rgb(243,239,235); border: 4px solid rgb(217, 204, 190);" class="p-1">
+        <div>
+          <div style="height: 18px; width: 18px; border-radius: 100%; background: rgba(17,63,116, 0.5); border: 3px solid #115da1; display: inline-block"></div>
+          <p style="display: inline-block">Location of a Pump</p>
+        </div>
+        <div>
+          <p style="display: inline-block">Deaths on Location: </p>
+          <div style="display: inline-block">
+            <div style="height: 12px; width: 12px; border-radius: 100%; background: #e99995; display: inline-block"></div>
+            <p style="display: inline-block">1&nbsp;</p>
+          </div>
+          <div style="display: inline-block">
+            <div style="height: 12px; width: 12px; border-radius: 100%; background: #e0706b; display: inline-block"></div>
+            <p style="display: inline-block">2&nbsp;</p>
+          </div>
+          <div style="display: inline-block">
+            <div style="height: 12px; width: 12px; border-radius: 100%; background: #d84741; display: inline-block"></div>
+            <p style="display: inline-block">3&nbsp;</p>
+          </div>
+          <div style="display: inline-block">
+            <div style="height: 12px; width: 12px; border-radius: 100%; background: #be2d27; display: inline-block"></div>
+            <p style="display: inline-block">4&nbsp;</p>
+          </div>
+          <div style="display: inline-block">
+            <div style="height: 12px; width: 12px; border-radius: 100%; background: #94231f; display: inline-block"></div>
+            <p style="display: inline-block">5&nbsp;</p>
+          </div>
+          <div style="display: inline-block">
+            <div style="height: 12px; width: 12px; border-radius: 100%; background: #6a1916; display: inline-block"></div>
+            <p style="display: inline-block">6+</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="dinfoModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content p-2" style="background: rgb(243,239,235)">
+        <span>UK Census data from <a href="http://www.visionofbritain.org.uk/" target="_blank">www.visionofbritain.org.uk</a></span>
+        <span>Cholera deaths by gender data from Naples in the Time of Cholera 1884-1911 p119.</span>
+        <span>Further information available at </span><a href="https://www.nejm.org/doi/full/10.1056/NEJM199610103351520" target="_blank">www.nejm.org/doi/full/10.1056/NEJM199610103351520</a></span>
+        <hr>
+        <span>The visuals in Cholera Data Visualized were created with Plotly.js and Leaflet.js. Information available at <a href="https://plot.ly/javascript/">plot.ly/javascript</a> and <a href="https://leafletjs.com/">leafletjs.com</a> respectively.</span>
+        <hr>
+        <span>Please address comments and concerns regarding Cholera Data Visualized to Vincent Nagoshi at <a href="mailto:vnagoshi@hawaii.edu">vnagoshi@hawaii.edu</a></span>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="cd-dadModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div id="cd-dad"></div>
+    </div>
+  </div>
+  <div class="modal fade" id="cd-atdtModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div id="cd-atdt"></div>
+    </div>
+  </div>
+  <div class="modal fade" id="ncasd-amfModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div id="ncasd-amf"></div>
+    </div>
+  </div>
+  <div class="modal fade px-auto" id="ncasd-amfbcModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" >
+    <div class="modal-dialog" role="document">
+      <div id="ncasd-amfbc"></div>
+    </div>
+  </div>
+  <div class="modal fade px-auto" id="ukc-amftModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" >
+    <div class="modal-dialog" role="document">
+      <div id="ukc-amft"></div>
+    </div>
+  </div>
+  <div class="modal fade px-auto" id="ukc-amafpcModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" >
+    <div class="modal-dialog" role="document">
+      <div id="ukc-ampc"></div>
+      <div id="ukc-afpc"></div>
+    </div>
+  </div>
+  <div class="modal fade px-auto" id="ukc-amfbcModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" >
+    <div class="modal-dialog" role="document">
+      <div id="ukc-amfbc"></div>
+    </div>
+  </div>
+  <div class="modal fade px-auto" id="ukc-tmtfpcModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" >
+    <div class="modal-dialog" role="document">
+      <div id="ukc-tmtfpc"></div>
+    </div>
+  </div>
+  
+  
+  <!-- TODO -->
+    <!--
+      Info section ()
+    -->
+    
+  <script>
+    const choleraData = {};
+  </script>
+     
+  <script>
+  
+
+  function load(file, callback) {
+    var client = new XMLHttpRequest();
+    client.open('GET', file);
+    client.onreadystatechange = function() {
+      if(client.readyState == 4) {
+        callback(client.responseText);
+      }
+    };
+    client.send();
+  };
+  load('./Cholera/choleraDeaths.tsv', function parse(e) {
+    let raw = e.split(/\n|\t/);
+    choleraData["cd-date"] = [];
+    choleraData["cd-attack"] = [];
+    choleraData["cd-death"] = [];
+    choleraData["cd-total"] = [];
+    choleraData["cd-attack-total"] = [];
+    choleraData["cd-death-total"] = [];
+    
+    for(let i = 3; i < raw.length; i+=3) {
+      choleraData["cd-date"].push(raw[i]);
+      choleraData["cd-attack"].push(raw[i+1]);
+      choleraData["cd-death"].push(raw[i+2]);
+      choleraData["cd-total"].push(parseFloat(raw[i+2]) + parseFloat(raw[i+1]));
+      choleraData["cd-attack-total"].push(parseInt(raw[i+1]) + (choleraData["cd-attack-total"].length > 0 ? choleraData["cd-attack-total"][choleraData["cd-attack-total"].length - 1] : 0));
+      choleraData["cd-death-total"].push(parseInt(raw[i+2]) + (choleraData["cd-death-total"].length > 0 ? choleraData["cd-death-total"][choleraData["cd-death-total"].length - 1] : 0));
+    }
+  });
+  load('./Cholera/naplesCholeraAgeSexData.tsv', function parse(e) {
+    let raw = e.split(/\n|\s/);
+    choleraData["ncasd-age"] = [];
+    choleraData["ncasd-male"] = [];
+    choleraData["ncasd-female"] = [];
+    for(let i = 34; i < raw.length - 6; i+=3) {
+      choleraData["ncasd-age"].push(raw[i]);
+      choleraData["ncasd-male"].push(raw[i+1]);
+      choleraData["ncasd-female"].push(raw[i+2]);
+    }
+    choleraData["ncasd-age"].push("80+");
+    choleraData["ncasd-male"].push(raw[60]);
+    choleraData["ncasd-female"].push(raw[61]);
+  });
+  load('./Cholera/UKcensus1851.csv', function parse(e) {
+    let raw = e.split(/,|\r\n|\n/);
+    choleraData["ukc-age"] = [];
+    choleraData["ukc-male"] = [];
+    choleraData["ukc-female"] = [];
+    for(let i = 6; i < raw.length; i+=3) {
+      choleraData["ukc-age"].push(raw[i].replace(" to ", "-"));
+      choleraData["ukc-male"].push(raw[i+1]);
+      choleraData["ukc-female"].push(raw[i+2]);
+    }
+  });
+  load('./Cholera/choleraDeathLocations.csv', function parse(e) {
+    let raw = e.split(/\n|,\n|,/);
+    choleraData["cdl-deaths"] = [];
+    choleraData["cdl-lat"] = [];
+    choleraData["cdl-lon"] = [];
+    for(let i = 0; i < raw.length -3; i+=3) {
+      choleraData["cdl-deaths"].push(raw[i]);
+      choleraData["cdl-lat"].push(raw[i+1]);
+      choleraData["cdl-lon"].push(raw[i+2]);
+    }
+  });
+  load('./Cholera/choleraPumpLocations.csv', function parse(e) {
+    let raw = e.split(/,|\n/);
+    choleraData["cpl-lat"] = [];
+    choleraData["cpl-lon"] = [];
+    for(let i = 0; i < raw.length; i+=2) {
+      choleraData["cpl-lat"].push(raw[i]);
+      choleraData["cpl-lon"].push(raw[i+1]);
+    }
+    console.log(choleraData);
+    buildPage();
+  });
+  
+  function buildPage() {
+    //Map data
+    for(let i = 0; i < choleraData["cpl-lat"].length; i++) {
+      L.circle([choleraData["cpl-lon"][i], choleraData["cpl-lat"][i]], {
+        color: '#115da1',
+        fillColor: '#115da1',
+        fillOpacity: 0.5,
+        radius: 8
+	    }).addTo(mymap);
+    }
+    for(let i = 0; i < choleraData["cdl-lat"].length; i++) {
+      L.circle([choleraData["cdl-lon"][i], choleraData["cdl-lat"][i]], {
+        color: choleraData["cdl-deaths"][i] == 1 ? '#e99995' : 
+          choleraData["cdl-deaths"][i] == 2 ? '#e0706b' : 
+            choleraData["cdl-deaths"][i] == 3 ? '#d84741' :
+              choleraData["cdl-deaths"][i] == 4 ? '#be2d27' : 
+                choleraData["cdl-deaths"][i] == 5 ? '#94231f' : '#6a1916',
+        fillColor: choleraData["cdl-deaths"][i] == 1 ? '#e99995' : 
+          choleraData["cdl-deaths"][i] == 2 ? '#e0706b' : 
+            choleraData["cdl-deaths"][i] == 3 ? '#d84741' :
+              choleraData["cdl-deaths"][i] == 4 ? '#be2d27' : 
+                choleraData["cdl-deaths"][i] == 5 ? '#94231f' : '#6a1916',
+        fillOpacity: 1,
+        radius: 2
+	    }).addTo(mymap);
+    }
+    
+    var data = [{
+      type: 'table',
+      header: {
+        values: [["Date"], ["Attacks"], 
+                     ["Deaths"], ["Total"]],
+        align: "center",
+        line: {width: 1, color: 'black'},
+        fill: {color: "grey"},
+        font: {family: "Arial", size: 12, color: "white"}
+      },
+      cells: {
+        values: [choleraData["cd-date"], choleraData["cd-attack"], choleraData["cd-death"], choleraData["cd-total"]],
+        align: "center",
+        line: {color: "black", width: 1},
+        font: {family: "Arial", size: 11, color: ["black"]} 
+      }
+    }];
+    Plotly.plot('cd-dad', data, {paper_bgcolor: "rgb(217, 204, 190)", margin: {l: 50, r: 50, b: 50, t: 50}});
+    
+    var trace1 = {
+      x: choleraData['cd-date'],
+      y: choleraData['cd-attack'],
+      name: 'Attacks',
+      type: 'scatter'
+    };
+    var trace2 = {
+      x: choleraData['cd-date'],
+      y: choleraData['cd-attack-total'],
+      name: 'Total Attacks',
+      type: 'scatter'
+    };
+    var trace3 = {
+      x: choleraData['cd-date'],
+      y: choleraData['cd-death'],
+      name: 'Deaths',
+      type: 'scatter'
+    };
+    var trace4 = {
+      x: choleraData['cd-date'],
+      y: choleraData['cd-death-total'],
+      name: 'Total Deaths',
+      type: 'scatter'
+    };
+    var layout = {
+      title: 'Attacks and Deaths by Date',
+      xaxis: {
+        title: 'Date (1855)',
+        showgrid: false,
+        zeroline: false
+      },
+      yaxis: {
+        title: 'Amount',
+        showline: false
+      }
+    };
+    Plotly.plot('cd-atdt', [trace1, trace2, trace3, trace4], layout);
+        
+        
+    // Age Range to Deaths per 10,000 Inhabitants by Gender Table
+    Plotly.plot('ncasd-amf',
+      [{
+        type: 'table',
+        header: {
+          values: [["Age_Range"], ["Male"], ["Female"]],
+          align: "center",
+          line: {width: 1, color: 'black'},
+          fill: {color: "grey"},
+          font: {family: "Arial", size: 12, color: "white"}
+        },
+        cells: {
+          values: [choleraData["ncasd-age"], choleraData["ncasd-male"], choleraData["ncasd-female"]],
+          align: "center",
+          line: {color: "black", width: 1},
+          font: {family: "Arial", size: 11, color: ["black"]} 
+        }
+      }], {
+        title: "Deaths per 10,000 Inhabitants by Age Group"
+      });
+    console.log(choleraData["ncasd-age"]);
+    
+    // Age Range to Deaths per 10,000 Inhabitants by Gender Bar Chart
+    var trace5 = {
+      x: choleraData["ncasd-age"],
+      y: choleraData["ncasd-male"],
+      name: 'Male',
+      type: 'bar'
+    };
+    var trace6 = {
+      x: choleraData["ncasd-age"],
+      y: choleraData["ncasd-female"],
+      name: 'Female',
+      type: 'bar'
+    };
+    var layout3 = {
+      barmode: 'group',
+      xaxis: {
+        title: 'Age Range',
+      },
+      yaxis: {
+        title: 'Deaths per 10,000 Inhabitants'
+      }
+    };
+    Plotly.newPlot('ncasd-amfbc', [trace5,trace6], layout3);
+    
+    
+    //
+    var data3 = [{
+      type: 'table',
+      header: {
+        values: [["Age_Range"], ["Male"], ["Female"]],
+        align: "center",
+        line: {width: 1, color: 'black'},
+        fill: {color: "grey"},
+        font: {family: "Arial", size: 12, color: "white"}
+      },
+      cells: {
+        values: [choleraData["ukc-age"], choleraData["ukc-male"], choleraData["ukc-female"]],
+        align: "center",
+        line: {color: "black", width: 1},
+        font: {family: "Arial", size: 11, color: ["black"]} 
+      }
+    }];
+    var layout4 = {
+      title: ""
+    }
+    Plotly.plot('ukc-amft', data3, layout4);
+   
+
+    Plotly.plot('ukc-ampc', 
+      [{
+        values: choleraData["ukc-male"],
+        labels: choleraData["ukc-age"],
+        type: 'pie'
+      }], 
+        {title: 'Male Population UK Age Demographic (1851)'
+      }); 
+    Plotly.plot('ukc-afpc', 
+      [{
+        values: choleraData["ukc-female"],
+        labels: choleraData["ukc-age"],
+        type: 'pie'
+      }], {
+        title: 'Female Population UK Age Demographic (1851)'
+      });
+    
+    Plotly.plot('ukc-amfbc', 
+      [{
+        x: choleraData["ukc-age"],
+        y: choleraData["ukc-male"],
+        name: 'Female',
+        type: 'bar'
+      },{
+        x: choleraData["ukc-age"],
+        y: choleraData["ukc-female"],
+        name: 'Female',
+        type: 'bar'
+      }], {
+        title: 'UK Population Demographic by Age',
+        barmode: 'group',
+        xaxis: {
+          title: 'Age Range',
+        },
+        yaxis: {
+          title: 'Population'
+        }
+      });
+    
+    // Total Male Female Population Demographic    
+    let tMale = 0;
+    choleraData["ukc-male"].forEach(function(e) {
+      tMale += parseFloat(e);
+    });
+    let tFemale = 0;
+    choleraData["ukc-female"].forEach(function(e) {
+      tFemale += parseFloat(e);
+    });
+    Plotly.plot('ukc-tmtfpc', 
+      [{
+        values: [tMale, tFemale],
+        labels: ["Male", "Female"],
+        type: 'pie'
+      }], {
+        title: 'UK Gender Demographic (1851)'
+      });
+  }
+  
+  </script>
+  
+  <script>
+  var mymap = L.map('mapid', {center: [51.513341, -0.136668],
+        zoom: 17, zoomControl: false});
+
+  L.control.zoom({
+     position:'bottomleft'
+  }).addTo(mymap);
+  
+	L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+		maxZoom: 18,
+		attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+			'<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+		id: 'mapbox.streets'
+	}).addTo(mymap);
+
+
+
+  </script>
+  
+  <script>
+  interact('.draggable')
+        .draggable({
+            // enable inertial throwing
+            inertia: true,
+            // keep the element within the area of it's parent
+            restrict: {
+                restriction: "parent",
+                endOnly: true,
+                elementRect: { top: 0, left: 0, bottom: 1, right: 1 }
+            },
+            // enable autoScroll
+            autoScroll: true,
+            onstart: function (event) {
+                console.log('onstart');
+            },
+            // call this function on every dragmove event
+            onmove: dragMoveListener,
+            // call this function on every dragend event
+            onend: function (event) {
+                console.log('onend');
+                var textEl = event.target.querySelector('p');
+                textEl && (textEl.textContent =
+                    'moved a distance of '
+                    + (Math.sqrt(event.dx * event.dx +
+                        event.dy * event.dy)|0) + 'px');
+            }
+        });
+    function dragMoveListener (event) {
+        console.log('dragMoveListener');
+        var target = event.target,
+            // keep the dragged position in the data-x/data-y attributes
+            x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx,
+            y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+        // translate the element
+        target.style.webkitTransform =
+            target.style.transform =
+                'translate(' + x + 'px, ' + y + 'px)';
+        // update the position attributes
+        target.setAttribute('data-x', x);
+        target.setAttribute('data-y', y);
+    }
+  </script>
+</body>
+</html>
